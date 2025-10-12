@@ -140,3 +140,51 @@ vite.config.ts.timestamp-*
 
 # IDE files
 .idea/
+
+# Java build files
+**/build/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+
+# Gradle files
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Spring Boot
+spring-boot-*.jar
+*.original
+
+# Log files
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Build outputs that should be ignored
+**/checksums.*
+**/fileHashes.*
+**/executionHistory.*
+**/buildOutputCleanup.*
+**/resourceHashesCache.*
+**/.gradle/
+**/gradle/wrapper/gradle-wrapper.properties
