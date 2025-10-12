@@ -1,0 +1,14 @@
+.git
+.build
+.gradle
+out
+**/node_modules
+**/build
+**/target
+.gradle
+build
+.gradle/
+gradle/wrapper/gradle-wrapper.jar
+
+
+

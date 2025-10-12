@@ -187,4 +187,9 @@ Thumbs.db
 **/buildOutputCleanup.*
 **/resourceHashesCache.*
 **/.gradle/
-**/gradle/wrapper/gradle-wrapper.properties
+
+# Keep Gradle wrapper files (these should be committed)
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+!gradlew
+!gradlew.bat
