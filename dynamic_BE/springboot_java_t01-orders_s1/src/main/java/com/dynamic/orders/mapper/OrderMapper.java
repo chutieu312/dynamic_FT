@@ -1,61 +1,99 @@
 package com.dynamic.orders.mapper;
 
 import com.dynamic.orders.api.OrderDto;
-import com.dynamic.orders.entity.Order;
+import com.dynamic.orders.api.CreateOrderRequest;
+import com.dynamic.orders.api.UpdateOrderRequest;
+import com.dynamic.orders.api.OrderStatus;
+import com.dynamic.orders.model.OrderEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderMapper {
 
     /**
-     * Convert Order entity to OrderDto for API responses
+     * Convert OrderEntity to OrderDto for API responses
      */
-    public OrderDto toDto(Order order) {
-        if (order == null) {
+    public OrderDto toDto(OrderEntity entity) {
+        if (entity == null) {
             return null;
         }
         
         return new OrderDto(
-            order.getId(),
-            order.getItem(),
-            order.getPrice(),
-            order.getStatus()
+            entity.getId(),
+            entity.getItem(),
+            entity.getPrice(),
+            entity.getStatus()
         );
     }
 
     /**
-     * Convert OrderDto to Order entity for database operations
+     * Convert OrderDto to OrderEntity for database operations
      */
-    public Order toEntity(OrderDto dto) {
+    public OrderEntity toEntity(OrderDto dto) {
         if (dto == null) {
             return null;
         }
         
-        Order order = new Order();
-        order.setId(dto.id());
-        order.setItem(dto.item());
-        order.setPrice(dto.price());
-        order.setStatus(dto.status());
+        OrderEntity entity = new OrderEntity();
+        entity.setId(dto.id());
+        entity.setItem(dto.item());
+        entity.setPrice(dto.price());
+        entity.setStatus(dto.status());
         
-        return order;
+        return entity;
     }
 
     /**
-     * Update existing Order entity with OrderDto data
+     * Create new OrderEntity from CreateOrderRequest
      */
-    public void updateEntity(OrderDto dto, Order existingOrder) {
-        if (dto == null || existingOrder == null) {
+    public OrderEntity toEntity(CreateOrderRequest request) {
+        if (request == null) {
+            return null;
+        }
+        
+        OrderEntity entity = new OrderEntity();
+        entity.setItem(request.item());
+        entity.setPrice(request.price());
+        entity.setStatus(OrderStatus.PENDING); // Default status for new orders
+        
+        return entity;
+    }
+
+    /**
+     * Update existing OrderEntity with UpdateOrderRequest data
+     */
+    public void updateEntity(UpdateOrderRequest request, OrderEntity existingEntity) {
+        if (request == null || existingEntity == null) {
+            return;
+        }
+        
+        if (request.item() != null) {
+            existingEntity.setItem(request.item());
+        }
+        if (request.price() != null) {
+            existingEntity.setPrice(request.price());
+        }
+        if (request.status() != null) {
+            existingEntity.setStatus(request.status());
+        }
+    }
+
+    /**
+     * Update existing OrderEntity with OrderDto data
+     */
+    public void updateEntity(OrderDto dto, OrderEntity existingEntity) {
+        if (dto == null || existingEntity == null) {
             return;
         }
         
         if (dto.item() != null) {
-            existingOrder.setItem(dto.item());
+            existingEntity.setItem(dto.item());
         }
         if (dto.price() != null) {
-            existingOrder.setPrice(dto.price());
+            existingEntity.setPrice(dto.price());
         }
         if (dto.status() != null) {
-            existingOrder.setStatus(dto.status());
+            existingEntity.setStatus(dto.status());
         }
     }
 }

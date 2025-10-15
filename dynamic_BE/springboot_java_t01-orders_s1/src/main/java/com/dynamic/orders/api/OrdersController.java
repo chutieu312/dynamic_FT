@@ -38,7 +38,7 @@ public class OrdersController {
 
     @PostMapping
     public ResponseEntity<OrderDto> create(@RequestBody @Valid CreateOrderRequest req) {
-        var created = svc.create(req.item(), req.price());
+        var created = svc.create(req);
         return ResponseEntity.created(URI.create("/api/v1/orders/" + created.id())).body(created);
     }
 
@@ -51,5 +51,38 @@ public class OrdersController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
         return svc.delete(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    // Additional business endpoints
+
+    @GetMapping("/status/{status}")
+    public List<OrderDto> getByStatus(@PathVariable OrderStatus status) {
+        return svc.getOrdersByStatus(status);
+    }
+
+    @GetMapping("/search")
+    public List<OrderDto> searchByItem(@RequestParam String item) {
+        return svc.searchByItem(item);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Long>> getOrderCounts() {
+        long totalCount = svc.getOrderCount();
+        long pendingCount = svc.getOrderCountByStatus(OrderStatus.PENDING);
+        long confirmedCount = svc.getOrderCountByStatus(OrderStatus.CONFIRMED);
+        long shippedCount = svc.getOrderCountByStatus(OrderStatus.SHIPPED);
+        long deliveredCount = svc.getOrderCountByStatus(OrderStatus.DELIVERED);
+        long cancelledCount = svc.getOrderCountByStatus(OrderStatus.CANCELLED);
+
+        var counts = Map.of(
+            "total", totalCount,
+            "pending", pendingCount,
+            "confirmed", confirmedCount,
+            "shipped", shippedCount,
+            "delivered", deliveredCount,
+            "cancelled", cancelledCount
+        );
+        
+        return ResponseEntity.ok(counts);
     }
 }

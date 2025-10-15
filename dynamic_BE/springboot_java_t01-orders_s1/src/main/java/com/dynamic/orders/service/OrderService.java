@@ -1,61 +1,90 @@
 package com.dynamic.orders.service;
 
-import com.dynamic.orders.api.OrderDto;
-import com.dynamic.orders.api.CreateOrderRequest;
-import com.dynamic.orders.api.UpdateOrderRequest;
-import com.dynamic.orders.api.OrderStatus;
+import com.dynamic.orders.api.*;
+import com.dynamic.orders.model.OrderEntity;
+import com.dynamic.orders.repo.OrderRepository;
+import com.dynamic.orders.mapper.OrderMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class OrderService {
-    private final List<OrderDto> orders = new ArrayList<>();
-    private final AtomicInteger idGenerator = new AtomicInteger(1);
 
+    private final OrderRepository repo;
+    private final OrderMapper mapper;
+
+    public OrderService(OrderRepository repo, OrderMapper mapper) {
+        this.repo = repo;
+        this.mapper = mapper;
+    }
+
+    @Transactional(readOnly = true)
     public List<OrderDto> list() {
-        return new ArrayList<>(orders);
+        return repo.findAll()
+                  .stream()
+                  .map(mapper::toDto)
+                  .toList();
     }
 
+    @Transactional(readOnly = true)
     public Optional<OrderDto> get(int id) {
-        return orders.stream()
-                .filter(order -> order.id().equals(id))
-                .findFirst();
+        return repo.findById(id)
+                  .map(mapper::toDto);
     }
 
-    public OrderDto create(String item, BigDecimal price) {
-        OrderDto newOrder = new OrderDto(
-                idGenerator.getAndIncrement(),
-                item,
-                price,
-                OrderStatus.PENDING
-        );
-        orders.add(newOrder);
-        return newOrder;
+    @Transactional
+    public OrderDto create(CreateOrderRequest req) {
+        OrderEntity entity = mapper.toEntity(req);
+        OrderEntity savedEntity = repo.save(entity);
+        return mapper.toDto(savedEntity);
     }
 
-    public Optional<OrderDto> update(int id, UpdateOrderRequest request) {
-        for (int i = 0; i < orders.size(); i++) {
-            OrderDto order = orders.get(i);
-            if (order.id().equals(id)) {
-                OrderDto updatedOrder = new OrderDto(
-                        order.id(),
-                        request.item() != null ? request.item() : order.item(),
-                        request.price() != null ? request.price() : order.price(),
-                        request.status() != null ? request.status() : order.status()
-                );
-                orders.set(i, updatedOrder);
-                return Optional.of(updatedOrder);
-            }
-        }
-        return Optional.empty();
+    @Transactional
+    public Optional<OrderDto> update(int id, UpdateOrderRequest req) {
+        return repo.findById(id).map(entity -> {
+            mapper.updateEntity(req, entity);
+            OrderEntity updatedEntity = repo.save(entity);
+            return mapper.toDto(updatedEntity);
+        });
     }
 
+    @Transactional
     public boolean delete(int id) {
-        return orders.removeIf(order -> order.id().equals(id));
+        if (!repo.existsById(id)) {
+            return false;
+        }
+        repo.deleteById(id);
+        return true;
+    }
+
+    // Additional business methods using the mapper
+
+    @Transactional(readOnly = true)
+    public List<OrderDto> getOrdersByStatus(OrderStatus status) {
+        return repo.findByStatus(status)
+                  .stream()
+                  .map(mapper::toDto)
+                  .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderDto> searchByItem(String item) {
+        return repo.findByItemContaining(item)
+                  .stream()
+                  .map(mapper::toDto)
+                  .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public long getOrderCount() {
+        return repo.count();
+    }
+
+    @Transactional(readOnly = true)
+    public long getOrderCountByStatus(OrderStatus status) {
+        return repo.countByStatus(status);
     }
 }
