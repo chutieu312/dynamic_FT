@@ -15,7 +15,7 @@ import java.util.Map;
  * 5. Added proper input validation
  * 6. Used modern Java features (records, switch expressions, streams)
  */
-public class ReportService {
+public class ReportServiceTarget {
 
     public String generate(ReportRequest req) {
         validate(req);
