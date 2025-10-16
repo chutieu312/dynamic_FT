@@ -18,21 +18,28 @@ public class ReportService {
         if (start == null) start = LocalDate.now();
         if (end == null) end = start;
 
-        double sum = 0;
-        for (int i = 0; i < items.size(); i++) sum += items.get(i);
-        double avg = items.size() == 0 ? 0 : sum / items.size();
+        Statistics stats = calculateStatistics(items);
 
         String h = type.title();
 
         StringBuilder sb = new StringBuilder();
         sb.append(h).append(" Report ");
         sb.append(start.toString()).append(" - ").append(end.toString()).append("\n");
-        sb.append("Count: ").append(items.size()).append("\n");
-        sb.append("Sum: ").append(sum).append("\n");
-        sb.append("Avg: ").append(avg).append("\n");
+        sb.append("Count: ").append(stats.count()).append("\n");
+        sb.append("Sum: ").append(stats.sum()).append("\n");
+        sb.append("Avg: ").append(stats.average()).append("\n");
 
         sb.append(type.mode()).append("\n");
 
         return sb.toString();
     }
+    
+    private Statistics calculateStatistics(List<Double> items) {
+        double sum = 0;
+        for (int i = 0; i < items.size(); i++) sum += items.get(i);
+        double avg = items.size() == 0 ? 0 : sum / items.size();
+        return new Statistics(items.size(), sum, avg);
+    }
 }
+
+record Statistics(int count, double sum, double average) {}

@@ -11,3 +11,5 @@ if [ $? -eq 0 ]; then
 else
     echo "Compilation failed!"
 fi
+
+# cd "c:\Users\canng\dynamic_FT\dynamic_BE\speechify_java_refactor_prep" && ./run.sh
