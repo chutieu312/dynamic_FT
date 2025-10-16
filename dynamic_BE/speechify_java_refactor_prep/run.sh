@@ -1,5 +1,5 @@
 #!/bin/bash
-cd src/main/java
+cd src
 rm -f app/*.class
 javac app/ReportType.java app/ReportService.java app/Main.java app/ReportServiceTest.java
 if [ $? -eq 0 ]; then
