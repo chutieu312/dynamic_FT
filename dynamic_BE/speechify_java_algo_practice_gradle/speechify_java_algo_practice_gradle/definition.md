@@ -80,16 +80,39 @@ root
 - **Text Nodes:** `SsmlNode.text("content")` - actual text content
 - **Element Nodes:** `SsmlNode.elem("name", attrs, children)` - XML elements
 
-### 2. Element Forms
+### 2. Children List (`List<SsmlNode>`)
+**CRITICAL: Order is preserved and essential!**
+
+The `children` parameter can contain:
+- ✅ **Element nodes** (`SsmlNode.elem(...)`)
+- ✅ **Text nodes** (`SsmlNode.text(...)`) 
+- ✅ **Mixed combinations** in exact sequence
+
+**Example:** `<p>Hello <em>world</em>!</p>` produces children in precise order:
+```java
+List<SsmlNode> children = List.of(
+    SsmlNode.text("Hello "),        // Index 0: first text
+    SsmlNode.elem("em", Map.of(), List.of(  // Index 1: nested element
+        SsmlNode.text("world")
+    )),
+    SsmlNode.text("!")              // Index 2: final text
+);
+```
+
+**Why order matters:** Wrong order would produce `"!Hello world"` instead of `"Hello world!"`
+
+**Parser requirement:** Must process SSML left-to-right and add children sequentially.
+
+### 3. Element Forms
 - **Container:** `<speak>content</speak>` - has children between open/close tags
 - **Self-closing:** `<break time="1s"/>` - no children, ends with `/>`
 
-### 3. Attributes
+### 4. Attributes
 - **Double quotes:** `time="1s"`
 - **Single quotes:** `level='strong'`
 - **Multiple:** `<audio src="file.wav" volume="loud"/>`
 
-### 4. Parsing Strategy
+### 5. Parsing Strategy
 - **Cursor-based:** Move index `i` through string `s`
 - **Recursive descent:** Parse nested elements by calling parser recursively
 - **State machine:** Track whether we're in text, start tag, end tag, etc.

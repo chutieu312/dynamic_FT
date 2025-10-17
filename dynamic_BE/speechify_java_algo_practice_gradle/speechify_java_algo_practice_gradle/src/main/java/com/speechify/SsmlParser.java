@@ -48,8 +48,10 @@ public class SsmlParser {
     }
 
     private void skipWs() {
-        // TODO: i++ while Character.isWhitespace
-        throw new UnsupportedOperationException("TODO: implement skipWs()");
+        // done: i++ while Character.isWhitespace
+        while (i<n && Character.isWhitespace(s.charAt(i))) {
+            i++;
+        }
     }
 
     private void expect(char c) {
