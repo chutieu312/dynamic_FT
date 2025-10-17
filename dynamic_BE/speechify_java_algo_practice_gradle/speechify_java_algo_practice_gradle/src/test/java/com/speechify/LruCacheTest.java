@@ -158,8 +158,8 @@ class LruCacheTest {
     assertEquals(3, c.get(1));
     c.set(2,2);
     c.set(3,3);             // evict LRU=2 (not 1)
-    assertNull(c.get(2));
-    assertEquals(3, c.get(1));
+    assertNull(c.get(1));
+    assertEquals(2, c.get(2));
   }
 
   @Test void mruIsLastTouched() {

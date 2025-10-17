@@ -40,8 +40,13 @@ public class LruCache<K, V> {
      * Side effect: promotes the node to MRU position.
      */
     public V get(K key) {
-        // TODO: look up node in map; if null return null; else move to front and return value.
-        throw new UnsupportedOperationException("TODO: implement get()");
+        // done: look up node in map; if null return null; else move to front and return value.
+        Node<K,V> node = map.get(key);
+        if (node == null) {
+            return null;
+        }
+        moveToFront(node);
+        return node.v;
     }
 
     /**
@@ -51,34 +56,61 @@ public class LruCache<K, V> {
      * Side effect: new/updated node becomes MRU.
      */
     public void set(K key, V value) {
-        // TODO: implement set() per rules above.
-        throw new UnsupportedOperationException("TODO: implement set()");
+        // done: implement set() per rules above.
+        if (capacity == 0) {
+            return;
+        }
+        Node<K,V> existing = map.get(key);
+        if (existing == null) {
+            if (map.size() >= capacity) {
+                Node<K,V> evicted = evictLRU();
+                map.remove(evicted.k);
+            }
+            
+            Node<K,V> newNode = new Node<>(key, value);
+            map.put(key, newNode);
+            insertAfterHead(newNode);
+
+        }
+        else {
+            existing.v = value;
+            moveToFront(existing);
+        }
+
     }
 
     /* ===== Helpers you should implement ===== */
 
     /** Insert n right after head (as MRU). */
     private void insertAfterHead(Node<K,V> n) {
-        // TODO: pointer surgery: head <-> n <-> head.next
-        throw new UnsupportedOperationException("TODO: implement insertAfterHead()");
+        // done: pointer surgery: head <-> n <-> head.next
+        Node<K,V> oldMRU = head.next;
+        head.next = n;
+        n.prev = head;
+        n.next = oldMRU;
+        oldMRU.prev = n;
     }
 
     /** Remove n from its current position. */
     private void detach(Node<K,V> n) {
-        // TODO: pointer surgery to unlink n
-        throw new UnsupportedOperationException("TODO: implement detach()");
+        // done: pointer surgery to unlink n
+        n.prev.next = n.next;
+        n.next.prev = n.prev;
     }
 
     /** Move n to MRU position. */
     private void moveToFront(Node<K,V> n) {
-        // TODO: detach then insertAfterHead
-        throw new UnsupportedOperationException("TODO: implement moveToFront()");
+        // done: detach then insertAfterHead
+        detach(n);
+        insertAfterHead(n);
     }
 
     /** Remove LRU node (just before tail) and return it. Assumes size > 0. */
     private Node<K,V> evictLRU() {
-        // TODO: remove tail.prev from list and return it
-        throw new UnsupportedOperationException("TODO: implement evictLRU()");
+        // done: remove tail.prev from list and return it
+        Node<K,V> lruNode = tail.prev;
+        detach(lruNode);
+        return lruNode;
     }
 
     /* ==== visible-for-tests convenience (not required in interview) ==== */
