@@ -19,8 +19,9 @@ public class SsmlParser {
 
     /** Parse a full document/string into a synthetic "root" with its children. */
     public SsmlNode parse(String input) {
-        // done: initialize fields; loop until end and collect children; return SsmlNode.elem("root", Map.of(), children)
-        this.s = input;
+        // done: initialize fields; loop until end and collect children; 
+        // return SsmlNode.elem("root", Map.of(), children)
+        s = input;
         i = 0;
         n = input.length();
 

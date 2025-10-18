@@ -115,4 +115,34 @@ public class LruCache<K, V> {
 
     /* ==== visible-for-tests convenience (not required in interview) ==== */
     int sizeUnsafe() { return map.size(); }
+    
+    // Quick test to verify LRU cache logic during development
+    public static void main(String[] args) {
+        System.out.println("=== LRU Cache Simple Tests ===");
+        
+        // Test 1: Basic get/set
+        System.out.println("\n1. Basic Test:");
+        var cache1 = new LruCache<String, Integer>(2);
+        cache1.set("a", 1);
+        cache1.set("b", 2);
+        System.out.println("get('a') = " + cache1.get("a")); // Should be 1
+        System.out.println("get('x') = " + cache1.get("x")); // Should be null
+        
+        // Test 2: Eviction test  
+        System.out.println("\n2. Eviction Test:");
+        var cache2 = new LruCache<String, Integer>(2);
+        cache2.set("a", 1);
+        cache2.set("b", 2);
+        cache2.set("c", 3); // Should evict 'a'
+        System.out.println("get('a') = " + cache2.get("a")); // Should be null (evicted)
+        System.out.println("get('b') = " + cache2.get("b")); // Should be 2
+        System.out.println("get('c') = " + cache2.get("c")); // Should be 3
+        
+        // Test 3: Update test
+        System.out.println("\n3. Update Test:");
+        var cache3 = new LruCache<String, Integer>(2);
+        cache3.set("x", 10);
+        cache3.set("x", 20); // Update existing
+        System.out.println("get('x') = " + cache3.get("x")); // Should be 20
+    }
 }
