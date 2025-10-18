@@ -22,4 +22,9 @@ public class SsmlNode {
         return new SsmlNode(name, null, attrs, children);
     }
     public boolean isText() { return name == null; }
+    
+    @Override
+    public String toString() {
+        return isText() ? "\"" + text + "\"" : name + attrs + children;
+    }
 }

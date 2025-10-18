@@ -24,7 +24,7 @@ class SsmlParserTest {
     var root = p.parse("<speak><p>Hello <s>world</s>!</p></speak>");
     var speak = root.children.get(0);
     assertEquals("p", speak.children.get(0).name);
-    assertTrue(speak.children.get(0).children.get(1).isText()); // space + "!"
+    assertTrue(speak.children.get(0).children.get(2).isText()); // space + "!"
   }
 
   @Test void attributesQuoted() {
